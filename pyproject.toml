@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "daycircle"
+version = "1.0.0"
+description = "beautifully chart your average day over a period of time"
+authors = ["Mark Joshwel <mark@joshwel.co>"]
+license = "Unlicense"
+readme = "README.md"
+packages = [
+    { include = "daycircle", from = "src" },
+]
+
+[tool.poetry.scripts]
+daycircle = "daycircle:cli.main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+seaborn = "^0.12.2"
+matplotlib = "^3.8.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+mypy = "^1.5.1"
+isort = "^5.12.0"
+
+[tool.black]
+line-length = 90
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
