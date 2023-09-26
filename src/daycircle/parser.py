@@ -196,7 +196,7 @@ def parse(content: str, filename: str = "") -> Result[DaycircleFile]:
         return Result[DaycircleFile](
             DaycircleFile(day=DaycircleDate(0, 0, 0), colour=colour, events=events),
             error=ValueError(
-                "missing day metadata" + (f" for file {filename}" if filename else "")
+                "missing day metadata" + (f" for file '{filename}'" if filename else "")
             ),
         )
 
