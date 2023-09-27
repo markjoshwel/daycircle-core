@@ -1,7 +1,9 @@
 {
   "packages": [
     "python@latest",
-    "poetry@latest"
+    "poetry@latest",
+    "ninja@latest",
+    "blas@latest"
   ],
   "shell": {
     "init_hook": [],

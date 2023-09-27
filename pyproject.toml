@@ -10,20 +10,24 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-daycircle = "daycircle:cli.main"
+daycircle = "daycircle:__cli.entry"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.10,<3.13"
 seaborn = "^0.12.2"
-matplotlib = "^3.8.0"
+numpy = "^1.26.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
 mypy = "^1.5.1"
 isort = "^5.12.0"
+data-science-types = "^0.2.23"
 
 [tool.black]
 line-length = 90
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry-core"]

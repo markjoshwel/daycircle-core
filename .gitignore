@@ -1,5 +1,8 @@
 # project-specific
 samples/
+./*.svg
+./*.png
+./*.pdf
 
 # cached files
 __pycache__/
