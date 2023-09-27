@@ -31,7 +31,7 @@ root     = metadata
          ;
 
 metadata = "day" <whitespace> date
-         | "colour" <whitespace> rgbhex
+         | "#" <string> <whitespace> rgbhex
          ;
 key      = <string>
          | "@" <string>
@@ -55,7 +55,11 @@ there are four types of keys:
 
    specifies the date of which the events took place.
 
-2. **the metadata `colour` key** (optional)
+   this key is not required to be the first key in the file, but it must be present.  
+   for daycircle plaintext files that will be passed to `--colours`, this key will not be
+   checked for unlike files passed to the `targets` argument.
+
+2. **the metadata colour key** (optional)
 
    specifies the 6-digit hex colour code to use as the primary colour when generating the
    output graph colour palette.
@@ -76,11 +80,15 @@ there are four types of keys:
 example:
 
 ```text
+#sleep  e2531b
+#out    9593D9
+#work   A40E4C
+#ate    0F4C5C
 day     25-10-2023
 out     0000-0330
-@ate    0600
+@eat    0600
 sleep   0700-1730
 out     1715-1740
-@ate    2000
-work    2030-2330
+@eat    2000
+work    2030-2330
 ```

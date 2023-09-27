@@ -21,7 +21,6 @@ numpy = "^1.26.0"
 black = "^23.9.1"
 mypy = "^1.5.1"
 isort = "^5.12.0"
-data-science-types = "^0.2.23"
 
 [tool.black]
 line-length = 90
