@@ -2,9 +2,6 @@
 samples/
 outputs/
 fonts/
-*.svg
-*.png
-*.pdf
 
 # cached files
 __pycache__/

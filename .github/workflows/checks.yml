@@ -28,7 +28,7 @@ jobs:
         run: devbox run poetry run mypy src
 
       - name: check for black formatting compliance
-        run: devbox run poetry run "black --check src"
+        run: devbox run poetry run black --check src
 
       - name: analyse isort compliance
-        run: devbox run poetry run "isort --check src"
+        run: devbox run poetry run isort --check src

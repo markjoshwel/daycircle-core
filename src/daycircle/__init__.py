@@ -31,10 +31,11 @@ For more information, please refer to <http://unlicense.org/>
 
 from . import cli as __cli
 from .analyser import analyse
-from .grapher import DaycircleGraphData, colour_palette, graph
+from .grapher import DaycircleGraphData, colour_palette, graph, time_to_deg
 from .parser import (
     DaycircleColour,
     DaycircleDate,
+    DaycircleEvent,
     DaycircleEventMarker,
     DaycircleEventRange,
     DaycircleFileData,
@@ -42,4 +43,4 @@ from .parser import (
     DaycircleTime,
     parse,
 )
-from .utils import Result
+from .utils import Result, ResultType, result
