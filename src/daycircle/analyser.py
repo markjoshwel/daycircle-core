@@ -1,6 +1,6 @@
 """
-daycircle: beautifully chart your average day over a period of time
--------------------------------------------------------------------
+daycircle.analyser: analysis logic for daycircle
+------------------------------------------------
 by mark <mark@joshwel.co>
 
 This is free and unencumbered software released into the public domain.
@@ -29,17 +29,26 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 """
 
-from . import cli as __cli
-from .analyser import analyse
-from .grapher import DaycircleGraphData, colour_palette, graph
-from .parser import (
-    DaycircleColour,
-    DaycircleDate,
-    DaycircleEventMarker,
-    DaycircleEventRange,
-    DaycircleFileData,
-    DaycircleKey,
-    DaycircleTime,
-    parse,
-)
-from .utils import Result
+from typing import Sequence
+
+from .grapher import DaycircleGraphData
+from .parser import DaycircleFileData
+from .utils import result
+
+
+@result(default=DaycircleGraphData())
+def analyse(targets: Sequence[DaycircleFileData]) -> DaycircleGraphData:
+    if len(targets) == 0:
+        raise ValueError("no targets provided")
+
+    elif len(targets) == 1:
+        target: DaycircleFileData = targets[0]
+
+        return DaycircleGraphData(
+            date=target.day,
+            date_end=None,
+            event_colours=target.event_colours,
+            events=target.events,
+        )
+
+    raise NotImplementedError("multiple targets not yet supported")

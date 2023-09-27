@@ -61,7 +61,7 @@ from .utils import Result
 
 class DaycircleKey(Enum):
     DAY = "day"
-    COLOUR = "colour"
+    COLOUR = "#"
     EVENT_MARKER = "@"
     EVENT_RANGE = "*"
     UNKNOWN = ""
@@ -90,18 +90,24 @@ class DaycircleDate(NamedTuple):
             error=ValueError(f"invalid date format: {date}"),
         )
 
+    def __str__(self) -> str:
+        return f"{self.day:02}-{self.month:02}-{self.year:04}"
+
 
 class DaycircleColour(NamedTuple):
     code: str
 
     @staticmethod
     def from_str(code: str) -> Result["DaycircleColour"]:
-        if len(code) == 6 and all([char in "0123456789ABCDEF" for char in code]):
+        if len(code) == 6 and all([char in "0123456789ABCDEFabcdef" for char in code]):
             return Result[DaycircleColour](DaycircleColour(code))
         else:
             return Result[DaycircleColour](
                 DaycircleColour(""), error=ValueError(f"invalid colour code: {code}")
             )
+
+    def __str__(self) -> str:
+        return "#" + self.code[:6]
 
 
 class DaycircleTime(NamedTuple):
@@ -117,10 +123,16 @@ class DaycircleTime(NamedTuple):
                 DaycircleTime(0, 0), error=ValueError(f"invalid time format: {time}")
             )
 
+    def __str__(self) -> str:
+        return f"{self.hour:02}{self.minute:02}"
+
 
 class DaycircleEventMarker(NamedTuple):
     name: str
     time: DaycircleTime
+
+    def __hash__(self) -> int:
+        return hash(self.name)
 
 
 class DaycircleEventRange(NamedTuple):
@@ -128,19 +140,24 @@ class DaycircleEventRange(NamedTuple):
     start: DaycircleTime
     end: DaycircleTime
 
+    def __hash__(self) -> int:
+        return hash(self.name)
+
 
 DaycircleEvent = DaycircleEventMarker | DaycircleEventRange
 
 
-class DaycircleFile(NamedTuple):
+class DaycircleFileData(NamedTuple):
     day: DaycircleDate | None = None
-    colour: DaycircleColour | None = None
+    event_colours: dict[str, DaycircleColour] = {}
     events: list[DaycircleEvent] = []
 
 
-def parse(content: str, filename: str = "") -> Result[DaycircleFile]:
+def parse(
+    content: str, filename: str = "", is_colour_file: bool = False
+) -> Result[DaycircleFileData]:
     day: DaycircleDate | None = None
-    colour: DaycircleColour | None = None
+    event_colours: dict[str, DaycircleColour] = {}
     events: list[DaycircleEvent] = []
 
     for line in content.splitlines():
@@ -153,13 +170,14 @@ def parse(content: str, filename: str = "") -> Result[DaycircleFile]:
             case [DaycircleKey.DAY.value, value]:
                 key_type = DaycircleKey.DAY
 
-            case [DaycircleKey.COLOUR.value, value]:
-                key_type = DaycircleKey.COLOUR
-
             case [key, value]:
                 if key.startswith(DaycircleKey.EVENT_MARKER.value):
-                    key.lstrip(DaycircleKey.EVENT_MARKER.value)
+                    key = key.lstrip(DaycircleKey.EVENT_MARKER.value)
                     key_type = DaycircleKey.EVENT_MARKER
+
+                elif key.startswith(DaycircleKey.COLOUR.value):
+                    key = key.lstrip(DaycircleKey.COLOUR.value)
+                    key_type = DaycircleKey.COLOUR
 
                 else:
                     key_type = DaycircleKey.EVENT_RANGE
@@ -172,7 +190,7 @@ def parse(content: str, filename: str = "") -> Result[DaycircleFile]:
 
             case DaycircleKey.COLOUR:  # rgb hex code
                 if colour_result := DaycircleColour.from_str(value):
-                    colour = colour_result.get()
+                    event_colours[key] = colour_result.get()
 
             case DaycircleKey.EVENT_MARKER:  # time
                 if time_result := DaycircleTime.from_str(value):
@@ -193,12 +211,27 @@ def parse(content: str, filename: str = "") -> Result[DaycircleFile]:
                         )
 
     if day is None:
-        return Result[DaycircleFile](
-            DaycircleFile(day=DaycircleDate(0, 0, 0), colour=colour, events=events),
-            error=ValueError(
-                "missing day metadata" + (f" for file '{filename}'" if filename else "")
-            ),
-        )
+        if is_colour_file:
+            return Result[DaycircleFileData](
+                DaycircleFileData(
+                    day=DaycircleDate(0, 0, 0), event_colours=event_colours, events=events
+                ),
+            )
+
+        else:
+            return Result[DaycircleFileData](
+                DaycircleFileData(
+                    day=DaycircleDate(0, 0, 0),
+                    event_colours=event_colours,
+                    events=events,
+                ),
+                error=ValueError(
+                    "missing day metadata"
+                    + (f" for file '{filename}'" if filename else "")
+                ),
+            )
 
     else:
-        return Result[DaycircleFile](DaycircleFile(day=day, colour=colour, events=events))
+        return Result[DaycircleFileData](
+            DaycircleFileData(day=day, event_colours=event_colours, events=events)
+        )

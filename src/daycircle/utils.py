@@ -29,7 +29,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 """
 
-from typing import Generic, NamedTuple, TypeVar
+from functools import wraps
+from typing import Callable, Generic, NamedTuple, ParamSpec, TypeVar
 
 # result class yoinked from https://github.com/markjoshwel/surplus
 ResultType = TypeVar("ResultType")
@@ -115,3 +116,23 @@ class Result(NamedTuple, Generic[ResultType]):
         if isinstance(self.error, BaseException):
             raise self.error
         return self.value
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def result(default: R) -> Callable[[Callable[P, R]], Callable[P, Result[R]]]:
+    """decorator that wraps a non-Result-returning function to return a Result"""
+
+    def result_decorator(func: Callable[P, R]) -> Callable[P, Result[R]]:
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> Result[R]:
+            try:
+                return Result(func(*args, **kwargs))
+            except Exception as exc:
+                return Result(default, error=exc)
+
+        return wrapper
+
+    return result_decorator
