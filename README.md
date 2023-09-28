@@ -10,7 +10,6 @@ beautifully chart your average day over a period of time
 day         20-10-2023
 #sleep      E2531B
 #out        8367C7
-#work       A40E4C
 #project    8FD694
 #eat        3D348B
 sleep       0000-0730
@@ -97,18 +96,18 @@ there are four types of keys:
    for daycircle plaintext files that will be passed to `--colour-file`, this key will not
    be checked for, unlike files passed to the `targets` argument.
 
-3. **the metadata colour key** (optional)
+2. **the metadata colour key** (optional)
 
    specifies the 6-digit hex colour code to use as the primary colour when generating the
    output graph colour palette.
 
-4. **the range event key** (optional)
+3. **the range event key** (optional)
 
    specifies a range of time in which the event took place.
 
    examples: sleeping, school, work, outside, etc.
 
-5. **the marker event key** (optional)
+4. **the marker event key** (optional)
 
     specifies a single point in time in which the event took place. this is useful for
     events that one would like to mark, but do not have a specific start and end time.
