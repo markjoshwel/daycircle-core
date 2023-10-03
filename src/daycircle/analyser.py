@@ -29,26 +29,26 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 """
 
-from typing import Sequence
+from typing import Sequence, Generator
 
 from .grapher import DaycircleGraphData
 from .parser import DaycircleFileData
 from .utils import result
 
 
-@result(default=DaycircleGraphData())
-def analyse(targets: Sequence[DaycircleFileData]) -> DaycircleGraphData:
+# @result(default=DaycircleGraphData())
+def analyse(targets: Sequence[DaycircleFileData], process_individually: bool = False) -> Generator[DaycircleGraphData, None, None]:
     if len(targets) == 0:
         raise ValueError("no targets provided")
 
-    elif len(targets) == 1:
-        target: DaycircleFileData = targets[0]
+    elif len(targets) > 1 and process_individually is False:
+        raise NotImplementedError("multiple targets not yet supported")
 
-        return DaycircleGraphData(
-            date=target.day,
-            date_end=None,
-            event_colours=target.event_colours,
-            events=target.events,
-        )
-
-    raise NotImplementedError("multiple targets not yet supported")
+    else:
+        for target in targets:
+            yield DaycircleGraphData(
+                date=target.day,
+                date_end=None,
+                event_colours=target.event_colours,
+                events=target.events,
+            )
