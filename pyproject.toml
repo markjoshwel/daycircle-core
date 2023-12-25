@@ -19,7 +19,7 @@ numpy = "^1.26.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"
-mypy = "^1.6.0"
+mypy = "^1.8.0"
 isort = "^5.12.0"
 
 [tool.black]
